@@ -1,32 +1,3 @@
-/* import React from 'react';
-import Card from '../components/Card';
-import { useAuth } from '../context/AuthContext';
-
-const Profile = () => {
-  const { user } = useAuth();
-
-  const userData = {
-    image: user?.user_metadata?.avatar_url || "https://randomuser.me/api/portraits/men/75.jpg",
-    name: user?.user_metadata?.full_name || 'Anonymous User',
-    title: user?.user_metadata?.title || 'Developer',
-    description: user?.user_metadata?.bio || 'No bio available.'
-  };
-
-  return (
-    <div className="flex justify-center items-center min-h-screen  p-4">
-      <Card
-        image={userData.image}
-        name={userData.name}
-        title={userData.title}
-        description={userData.description}
-        className="hover:shadow-xl transition-shadow duration-300"
-      />
-    </div>
-  );
-};
-
-export default Profile;
- */
 
 import Card from "../components/Card";
 
@@ -34,7 +5,7 @@ const Profile = () => {
   return (
     <div className="min-h-screen bg-black text-white p-8">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-10">
-        
+
         {/* Left: Profile Preview */}
         <div className="md:w-1/3">
           <Card
@@ -97,4 +68,3 @@ const Profile = () => {
   );
 };
 export default Profile;
- 
