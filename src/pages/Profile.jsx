@@ -34,7 +34,7 @@ const Profile = () => {
   return (
     <div className="min-h-screen bg-black text-white p-8">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-10">
-        
+
         {/* Left: Profile Preview */}
         <div className="md:w-1/3">
           <Card
@@ -97,4 +97,3 @@ const Profile = () => {
   );
 };
 export default Profile;
- 
