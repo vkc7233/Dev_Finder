@@ -18,39 +18,39 @@ const App = () => {
   return (
     <Provider store={appStore}>
       <AuthProvider>
-          <Routes>
-            <Route path="/" element={<Body />}>
-              <Route index element={<Navigate to="/home" replace />} />
-              <Route path="home" element={<Home />} />
-              <Route path="login" element={<Login />} />
-              <Route path="register" element={<Signup />} />
+        <Routes>
+          <Route path="/" element={<Body />}>
+            <Route index element={<Navigate to="/home" replace />} />
+            <Route path="home" element={<Home />} />
+            <Route path="login" element={<Login />} />
+            <Route path="register" element={<Signup />} />
 
-              <Route
-                path="feed"
-                element={
-                  <PrivateRoute>
-                    <Feed />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="profile"
-                element={
-                  <PrivateRoute>
-                    <Profile />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="match"
-                element={
-                  <PrivateRoute>
-                    <Match />
-                  </PrivateRoute>
-                }
-              />
-            </Route>
-          </Routes>
+            <Route
+              path="feed"
+              element={
+                <PrivateRoute>
+                  <Feed />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="profile"
+              element={
+                <PrivateRoute>
+                  <Profile />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="match"
+              element={
+                <PrivateRoute>
+                  <Match />
+                </PrivateRoute>
+              }
+            />
+          </Route>
+        </Routes>
       </AuthProvider>
     </Provider>
   );
