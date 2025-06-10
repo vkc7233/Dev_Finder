@@ -1,99 +1,164 @@
-/* import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { supabase } from '../utils/supabase';
 import Card from '../components/Card';
-import { useAuth } from '../context/AuthContext';
+import EditForm from '../components/EditForm';
+import { uploadProfileImage } from '../utils/imageHelpers';
 
 const Profile = () => {
-  const { user } = useAuth();
+  const [formData, setFormData] = useState({
+    firstname: '',
+    email: '',
+    lastname: '',
+    phone: '',
+    website: '',
+    profession: '',
+    bio: '',
+    location: '',
+    dob: { day: '', month: '', year: '' },
+    profileImage: null
+  });
+  const [loading, setLoading] = useState(false);
 
-  const userData = {
-    image: user?.user_metadata?.avatar_url || "https://randomuser.me/api/portraits/men/75.jpg",
-    name: user?.user_metadata?.full_name || 'Anonymous User',
-    title: user?.user_metadata?.title || 'Developer',
-    description: user?.user_metadata?.bio || 'No bio available.'
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const { data: authData } = await supabase
+          .from('user_auth')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+
+        const { data: profileData } = await supabase
+          .from('user_profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+
+        setFormData({
+          firstname: authData?.firstname || '',
+          email: authData?.email || '',
+          lastname: profileData?.lastname || '',
+          phone: profileData?.phone || '',
+          website: profileData?.website || '',
+          profession: profileData?.profession || '',
+          bio: profileData?.bio || '',
+          location: profileData?.location || '',
+          dob: profileData?.dob ? {
+            day: new Date(profileData.dob).getDate(),
+            month: new Date(profileData.dob).getMonth() + 1,
+            year: new Date(profileData.dob).getFullYear()
+          } : { day: '', month: '', year: '' },
+          profileImage: profileData?.profile_image || null
+        });
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+    if (name === 'profileImage') {
+      setFormData({ ...formData, profileImage: files[0] });
+    } else if (["day", "month", "year"].includes(name)) {
+      setFormData({ ...formData, dob: { ...formData.dob, [name]: value } });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('No user found');
+
+      const { error: authError } = await supabase
+        .from('user_auth')
+        .update({
+          firstname: formData.firstname,
+          email: formData.email
+        })
+        .eq('id', user.id);
+      if (authError) throw authError;
+
+      const { error: profileError } = await supabase
+        .from('user_profiles')
+        .update({
+          lastname: formData.lastname,
+          phone: formData.phone,
+          website: formData.website,
+          profession: formData.profession,
+          bio: formData.bio,
+          location: formData.location,
+          dob: new Date(
+            formData.dob.year,
+            formData.dob.month - 1,
+            formData.dob.day
+          ).toISOString(),
+          profile_image: formData.profileImage,
+          updated_at: new Date()
+        })
+        .eq('id', user.id);
+      if (profileError) throw profileError;
+
+      alert('Profile updated successfully!');
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      alert('Error updating profile');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleImageUpload = async (event) => {
+    try {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('No user found');
+
+      const publicUrl = await uploadProfileImage(file, user.id);
+
+      const { error: updateError } = await supabase
+        .from('user_profiles')
+        .update({
+          profile_image: publicUrl
+        })
+        .eq('id', user.id);
+      if (updateError) throw updateError;
+
+      setFormData(prev => ({
+        ...prev,
+        profileImage: publicUrl
+      }));
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      alert('Error uploading image');
+    }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen  p-4">
-      <Card
-        image={userData.image}
-        name={userData.name}
-        title={userData.title}
-        description={userData.description}
-        className="hover:shadow-xl transition-shadow duration-300"
-      />
-    </div>
-  );
-};
-
-export default Profile;
- */
-
-import Card from "../components/Card";
-
-const Profile = () => {
-  return (
-    <div className="min-h-screen bg-black text-white p-8">
-      <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-10">
-
-        {/* Left: Profile Preview */}
-        <div className="md:w-1/3">
-          <Card
-            imageUrl="https://source.unsplash.com/300x300?developer"
-            name="Vikas Sharma"
-            title="Frontend Developer"
-            description="React | Tailwind | Supabase"
-          />
-        </div>
-
-        {/* Right: Form Section */}
-        <div className="md:w-2/3 bg-gray-900 p-6 rounded-lg shadow-xl">
-          <h2 className="text-2xl font-bold mb-4">Edit Profile</h2>
-
-          <form className="space-y-4">
-            {/* Name */}
-            <div className="flex gap-4">
-              <input className="input" placeholder="First Name" />
-              <input className="input" placeholder="Last Name" />
-            </div>
-
-            {/* DOB + Gender */}
-            <div className="flex gap-4">
-              <input className="input" placeholder="DD" />
-              <input className="input" placeholder="MM" />
-              <input className="input" placeholder="YYYY" />
-            </div>
-            <div>
-              <label className="block mb-2">Gender</label>
-              <select className="input">
-                <option>Man</option>
-                <option>Woman</option>
-                <option>Other</option>
-              </select>
-            </div>
-
-            {/* Profession */}
-            <input className="input" placeholder="Profession (e.g. Full Stack Developer)" />
-
-            {/* Bio */}
-            <textarea className="input" rows={3} placeholder="Tell us about yourself..."></textarea>
-
-            {/* Location */}
-            <input className="input" placeholder="Location (e.g. Delhi, India)" />
-
-            {/* Upload */}
-            <div>
-              <label className="block mb-2">Upload Profile Image</label>
-              <input type="file" className="text-sm" />
-            </div>
-
-            {/* Save Button */}
-            <button className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded-md font-semibold">
-              Save Changes
-            </button>
-          </form>
-        </div>
+    <div className="min-h-screen bg-[#0f0f0f] text-white flex items-center justify-center px-4">
+      <div className="flex flex-col md:flex-row bg-[#1c1c1c] rounded-xl shadow-lg p-6 max-w-6xl w-full gap-8">
+        <Card formData={formData} />
+        <EditForm
+          formData={formData}
+          handleChange={handleChange}
+          handleSubmit={handleSubmit}
+          handleImageUpload={handleImageUpload}
+          loading={loading}
+        />
       </div>
     </div>
   );
 };
+
 export default Profile;

@@ -21,33 +21,33 @@ const Signup = () => {
     setError('');
 
     try {
-      const { data, error } = await supabase.auth.signUp({
+      // 1. Sign up with Supabase Auth
+      const { data: authData, error: authError } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
-        options: {
-          data: {
-            firstname: formData.firstname
-          }
-        }
       });
 
-      if (error) throw error;
-        const user = data?.user;
+      if (authError) throw authError;
 
-    // 2. Manually insert user profile into public.users table
-    if (user) {
-      const { error: insertError } = await supabase.from('users').insert([
-        {
-          id: user.id,                 // auth.users.id (UUID)
+      // 2. Insert into user_auth table
+      const { error: userAuthError } = await supabase
+        .from('user_auth')
+        .insert([{
+          id: authData.user.id,
           firstname: formData.firstname,
           email: formData.email
-        }
-      ]);
+        }]);
 
-      if (insertError) throw insertError;
-      
-        navigate('/login');
-       }
+      if (userAuthError) throw userAuthError;
+
+      // 3. Create empty profile record
+      const { error: profileError } = await supabase
+        .from('user_profiles')
+        .insert([{ id: authData.user.id }]);
+
+      if (profileError) throw profileError;
+
+      navigate('/profile');
     } catch (error) {
       setError(error.message);
     } finally {
