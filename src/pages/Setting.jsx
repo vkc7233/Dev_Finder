@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const Settings = () => {
+const Setting = () => {
   const [settings, setSettings] = useState({
     name: '',
     email: '',
@@ -67,4 +67,4 @@ const Settings = () => {
   );
 };
 
-export default Settings;
+export default Setting;

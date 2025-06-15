@@ -8,6 +8,7 @@ import Login from './components/Auth/Login';
 //import Register from './components/Register';
 import Feed from './pages/Feed';
 import Profile from './pages/Profile';
+import Setting from './pages/Setting';
 import Match from './pages/Match';
 import Home from './pages/Home';
 import PrivateRoute from './components/Auth/PrivateRoutes';
@@ -38,6 +39,14 @@ const App = () => {
               element={
                 <PrivateRoute>
                   <Profile />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/"
+              element={
+                <PrivateRoute>
+                  <Setting />
                 </PrivateRoute>
               }
             />

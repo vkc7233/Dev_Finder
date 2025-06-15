@@ -14,7 +14,7 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-     useEffect(() => {
+    useEffect(() => {
         if (user) {
             navigate('/');
         }
@@ -24,7 +24,7 @@ const Login = () => {
         e.preventDefault();
         setLoading(true);
         setError("");
-        
+
         try {
             const { data, error: loginError } = await supabase.auth.signInWithPassword({
                 email: input.email,
@@ -37,7 +37,7 @@ const Login = () => {
                 setError(loginError?.message || "Login failed");
             }
         } catch (error) {
-            setError("An unexpected error occurred");
+            setError("An unexpected error occurred", error);
         } finally {
             setLoading(false);
         }
