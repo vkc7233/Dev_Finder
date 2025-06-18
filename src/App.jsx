@@ -44,6 +44,14 @@ const App = () => {
                 }
               />
               <Route
+                path="settings"
+                element={
+                  <PrivateRoute>
+                    <Setting />
+                  </PrivateRoute>
+                }
+              />
+              <Route
                 path="match"
                 element={
                   <PrivateRoute>
