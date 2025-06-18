@@ -13,6 +13,7 @@ import Home from './pages/Home';
 import PrivateRoute from './components/Auth/PrivateRoutes';
 import { AuthProvider } from './context/AuthContext';
 import Signup from './components/Auth/Signup';
+import Explore from './pages/Explore';
 
 const App = () => {
   return (
@@ -30,6 +31,14 @@ const App = () => {
                 element={
                   <PrivateRoute>
                     <Feed />
+                  </PrivateRoute>
+                }
+              />
+             < Route
+                path="explore"
+                element={
+                  <PrivateRoute>
+                    <Explore />
                   </PrivateRoute>
                 }
               />
