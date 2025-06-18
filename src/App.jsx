@@ -8,6 +8,7 @@ import Login from './components/Auth/Login';
 //import Register from './components/Register';
 import Feed from './pages/Feed';
 import Profile from './pages/Profile';
+import Setting from './pages/Setting';
 import Match from './pages/Match';
 import Home from './pages/Home';
 import PrivateRoute from './components/Auth/PrivateRoutes';
@@ -19,26 +20,18 @@ const App = () => {
   return (
     <Provider store={appStore}>
       <AuthProvider>
-          <Routes>
-            <Route path="/" element={<Body />}>
-              <Route index element={<Navigate to="/home" replace />} />
-              <Route path="home" element={<Home />} />
-              <Route path="login" element={<Login />} />
-              <Route path="register" element={<Signup />} />
+        <Routes>
+          <Route path="/" element={<Body />}>
+            <Route index element={<Navigate to="/home" replace />} />
+            <Route path="home" element={<Home />} />
+            <Route path="login" element={<Login />} />
+            <Route path="register" element={<Signup />} />
 
               <Route
                 path="feed"
                 element={
                   <PrivateRoute>
                     <Feed />
-                  </PrivateRoute>
-                }
-              />
-             < Route
-                path="explore"
-                element={
-                  <PrivateRoute>
-                    <Explore />
                   </PrivateRoute>
                 }
               />
