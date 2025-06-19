@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Camera, Github, Linkedin, Globe, MapPin, Code, Briefcase, GraduationCap, Star, Plus, X } from 'lucide-react';
+import { ArrowLeft, Calendar, Camera, Github, Linkedin, Globe, MapPin, Code, Briefcase, GraduationCap, Star, Plus, X } from 'lucide-react';
 
 const Profile = () => {
   const [formData, setFormData] = useState({
+    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=500&fit=crop&crop=face",
     name: 'Alex Johnson',
+    dob: '15-05-1995',
+    gender: 'Female',
     jobTitle: 'Full Stack Developer',
     company: 'TechCorp Inc.',
     location: 'San Francisco, CA',
@@ -96,11 +99,15 @@ const Profile = () => {
 
           <div className="space-y-6">
             {/* Profile Picture Section */}
-            <div className="bg-[#1c1c1c] rounded-xl p-6 border border-gray-800">
-              <div className="flex flex-col items-center space-y-4">
+            <div className="bg-[#1c1c1c] rounded-xl p-4 border border-gray-800">
+              <div className="flex flex-col items-center space-y-2">
                 <div className="relative">
-                  <div className="w-32 h-32 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white text-4xl font-bold">
-                    {formData.name.charAt(0)}
+                  <div className="w-36 h-36 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white text-4xl font-bold">
+                    <img
+                      src={formData.image}
+                      alt={formData.name.charAt(0)}
+                      className="  object-cover rounded-full w-full h-full"
+                    />
                   </div>
                   <button
                     type="button"
@@ -133,6 +140,34 @@ const Profile = () => {
                     className="w-full px-4 py-3 bg-[#2b2b2b] border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition duration-200 cursor-not-allowed"
                     disabled
                   />
+                </div>
+                <div>
+                  <label className="block text-blue-200 text-sm font-medium mb-2">
+                    <Calendar className="inline mr-1" size={16} />
+                    Date Of Birth *
+                  </label>
+                  <input
+                    type="date"
+                    name="dob"
+                    value={formData.dob}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 bg-[#2b2b2b] border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition duration-200"
+                  />
+                </div>
+                <div>
+                  <label className="block text-blue-200 text-sm font-medium mb-2">
+                    Gender *
+                  </label>
+                  <select
+                    name="gender"
+                    value={formData.gender}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 bg-[#2b2b2b] border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500 transition duration-200"
+                  >
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                  </select>
                 </div>
 
                 <div>

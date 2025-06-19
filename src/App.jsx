@@ -15,6 +15,7 @@ import PrivateRoute from './components/Auth/PrivateRoutes';
 import { AuthProvider } from './context/AuthContext';
 import Signup from './components/Auth/Signup';
 import Explore from './pages/Explore';
+import ProfileCard from './components/ProfileCard';
 
 const App = () => {
   return (
@@ -48,6 +49,14 @@ const App = () => {
                 element={
                   <PrivateRoute>
                     <Setting />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="explore"
+                element={
+                  <PrivateRoute>
+                    <ProfileCard />
                   </PrivateRoute>
                 }
               />
