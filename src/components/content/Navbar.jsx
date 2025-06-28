@@ -6,8 +6,10 @@ import { useAuth } from '../../context/AuthContext';
 import { FaUserLarge } from "react-icons/fa6";
 import { IoSettingsOutline } from "react-icons/io5";
 
+
+
 const getGreetingMessage = (user) => {
-  return `Welcome, ${user?.user_metadata?.firstname || 'User'}!`;
+  return `Welcome, ${user?.fullname || 'Developer'} !`;
 };
 
 const MainNavbar = () => {
@@ -47,13 +49,12 @@ const MainNavbar = () => {
         {user ? (
           <div className="dropdown dropdown-end mr-2">
             <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
-              <div className="w-10 rounded-full">
+              <div className="w-10 h-10 rounded-full">
                 <img
                   alt="User Avatar"
                   src={
-                    Array.isArray(user.photos) && user.photos.length > 0
-                      ? user.photos[0]
-                      : "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                    user?.profile_data?.profile_image ||
+                    "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
                   }
                 />
               </div>

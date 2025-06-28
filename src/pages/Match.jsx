@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../utils/supabase';
-import DevCard from '../components/Card';
+import Profile from './Profile';
+import ProfileCard from '../components/ProfileCard';
 
 const Match = () => {
   const [developers, setDevelopers] = useState([]);
@@ -65,7 +66,7 @@ const Match = () => {
     <div className="min-h-screen bg-gray-900 p-4">
       <div className="max-w-md mx-auto pt-20">
         {currentIndex < developers.length ? (
-          <Card 
+          <Card
             developer={developers[currentIndex]}
             onSwipe={handleSwipe}
           />

@@ -1,8 +1,6 @@
 // App.jsx
 import React from 'react';
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
-import { Provider } from 'react-redux';
-import appStore from './utils/appStore';
 import Body from './components/content/Body';
 import Login from './components/Auth/Login';
 //import Register from './components/Register';
@@ -19,15 +17,15 @@ import ProfileCard from './components/ProfileCard';
 
 const App = () => {
   return (
-    <Provider store={appStore}>
-      <AuthProvider>
+          <AuthProvider>
         <Routes>
           <Route path="/" element={<Body />}>
             <Route index element={<Navigate to="/home" replace />} />
             <Route path="home" element={<Home />} />
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Signup />} />
-
+{/*             <Route path="match" element={<Match />} />
+ */}
               <Route
                 path="feed"
                 element={
@@ -56,22 +54,15 @@ const App = () => {
                 path="explore"
                 element={
                   <PrivateRoute>
-                    <ProfileCard />
+                    <Explore />
                   </PrivateRoute>
                 }
               />
-              <Route
-                path="match"
-                element={
-                  <PrivateRoute>
-                    <Match />
-                  </PrivateRoute>
-                }
-              />
+              
             </Route>
           </Routes>
       </AuthProvider>
-    </Provider>
+
   );
 };
 

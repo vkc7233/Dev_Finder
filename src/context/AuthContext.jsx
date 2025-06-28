@@ -7,19 +7,53 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const getUser = async () => {
-      const { data, error } = await supabase.auth.getSession();
-      if (error) {
-        console.error("Session fetch error:", error.message);
+    const getUserData = async () => {
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError) {
+        console.error("Session fetch error:", sessionError.message);
         return;
       }
-      setUser(data?.session?.user || null);
+
+
+      const sessionUser = sessionData?.session?.user;
+      if (!sessionUser) return setUser(null);
+
+      // Get user_auth details (e.g., firstname, email)
+      const { data: userData, error: userError } = await supabase
+        .from('user_auth')
+        .select('*')
+        .eq('id', sessionUser.id)
+        .single();
+       
+      
+      const { data: profileData, error: profileError } = await supabase
+        .from('user_profiles')
+        .select('*')
+        .eq('id', sessionUser.id)
+        .single();
+
+      if (userError || profileError) {
+        console.error("Error fetching user details:", userError.message || profileError.message);
+        return setUser(sessionUser);
+      }
+
+      setUser({ ...sessionUser, fullname: userData.fullname,
+                profile_data: profileData || null,
+                email: sessionUser.email
+       })
     };
 
-    getUser();
+    getUserData();
 
     const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user || null);
+      const sessionUser = session?.user;
+      if (!sessionUser) {
+        setUser(null);
+      }
+      else{
+        getUserData();
+      }
+
     });
 
     return () => {

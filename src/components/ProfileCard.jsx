@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Github, Linkedin, Calendar, Globe, MapPin, Code, Briefcase, Star, Heart, X, Coffee, Zap, Award } from 'lucide-react';
 import developerProfiles from '../data/developerProfiles';
+import { supabase } from '../utils/supabase';
 
 const ProfileCard = () => {
     const [currentCardIndex, setCurrentCardIndex] = useState(0);
@@ -28,12 +29,50 @@ const ProfileCard = () => {
     const [profiles, setProfiles] = useState([]);
 
     useEffect(() => {
-        const assignRandomStyles = developerProfiles.map((profile) => ({
-            ...profile,
-            bgGradient: bgGradients[Math.floor(Math.random() * bgGradients.length)],
-            accentColor: accentColors[Math.floor(Math.random() * accentColors.length)],
-        }));
-        setProfiles(assignRandomStyles);
+        const fetchProfiles = async () => {
+            // Fetch all user_auth (for name) and user_profiles (for details)
+            const { data: authData, error: authError } = await supabase
+                .from('user_auth')
+                .select('id, fullname');
+
+            const { data: profileData, error: profileError } = await supabase
+                .from('user_profiles')
+                .select('*');
+
+            if (authError || profileError) {
+                console.error('Error fetching profiles:', authError?.message || profileError?.message);
+                return;
+            }
+
+            // Merge by user id
+            const merged = profileData.map(profile => {
+                const auth = authData.find(a => a.id === profile.id);
+                return {
+                    ...profile,
+                    name: auth ? `${auth.fullname}` : 'Unknown Developer',
+                    bgGradient: bgGradients[Math.floor(Math.random() * bgGradients.length)],
+                    accentColor: accentColors[Math.floor(Math.random() * accentColors.length)],
+                    skills: profile.skills || [],
+                    years_of_experience: profile.years_of_experience || "0 years",
+                    gender: profile.gender || "Not specified",
+                    interests: profile.interests || [],
+                    dob: profile.dob || "Not specified",
+                    company: profile.company || "Not specified",
+                    location: profile.location || "Not specified",
+                    bio: profile.bio || "No bio available",
+                    learning: profile.current_learning || [],
+                    image: profile.profile_image || "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp",
+                    jobTitle: profile.job_title || "",
+                    github: profile.github_url || "",
+                    linkedin: profile.linkedin_url || "",
+                    portfolio: profile.portfolio_url || "",
+                };
+            });
+
+            setProfiles(merged);
+        };
+
+        fetchProfiles();
     }, []);
 
 
@@ -140,10 +179,10 @@ const ProfileCard = () => {
     };
 
     return (
-        <div className="min-h-screen bg-black flex items-center justify-center p-4 pt-8">
+        <div className="min-h-screen flex items-center justify-center p-4 pt-8">
             <div className="relative w-full max-w-sm">
 
-                {/* Card Stack Background with reduced height */}
+                {/* Card Stack Background with reduced height 
                 <div className="absolute top-0 left-0 w-full h-[600px] z-0">
                     <div className="absolute inset-0 bg-gray-900/40 backdrop-blur-sm rounded-3xl transform rotate-3 scale-95 border border-gray-700/50"></div>
                     <div className="absolute inset-0 bg-gray-900/60 backdrop-blur-sm rounded-3xl transform rotate-1 scale-97 border border-gray-600/50"></div>
@@ -201,7 +240,7 @@ const ProfileCard = () => {
                             <div className="flex items-center space-x-6 text-sm text-white/80">
                                 <div className="flex items-center bg-white/10 rounded-full px-3 py-1">
                                     <Award size={14} className="mr-2" />
-                                    {currentProfile.experience}
+                                    {currentProfile.years_of_experience} years
                                 </div>
                                 <div className="flex items-center bg-white/10 rounded-full px-3 py-1">
                                     <Coffee size={14} className="mr-2" />

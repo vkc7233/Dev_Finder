@@ -9,7 +9,7 @@ const Signup = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    firstname: ''
+    fullname: ''
   });
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -30,22 +30,18 @@ const Signup = () => {
       if (authError) throw authError;
 
       // 2. Insert into user_auth table
-      const { error: userAuthError } = await supabase
+      await supabase
         .from('user_auth')
-        .insert([{
+        .upsert([{
           id: authData.user.id,
-          firstname: formData.firstname,
+          fullname: formData.fullname,
           email: formData.email
         }]);
 
-      if (userAuthError) throw userAuthError;
-
       // 3. Create empty profile record
-      const { error: profileError } = await supabase
+      await supabase
         .from('user_profiles')
-        .insert([{ id: authData.user.id }]);
-
-      if (profileError) throw profileError;
+        .upsert([{ id: authData.user.id }]);
 
       navigate('/profile');
     } catch (error) {
@@ -70,13 +66,13 @@ const Signup = () => {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1">
-              First Name
+              Full Name
             </label>
             <input
               type="text"
-              name="firstname"
+              name="fullname"
               required
-              value={formData.firstname}
+              value={formData.fullname}
               onChange={handleChange}
 
               className="w-full px-4 py-2 bg-black border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"

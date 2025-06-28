@@ -8,9 +8,9 @@ export const uploadProfileImage = async (file, userId) => {
     
     // Check file type
     const fileExt = file.name.split('.').pop().toLowerCase();
-    const validTypes = ['jpg', 'jpeg', 'png', 'gif'];
+    const validTypes = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
     if (!validTypes.includes(fileExt)) {
-      throw new Error('Invalid file type. Please upload a JPG, PNG or GIF file.');
+      throw new Error('Invalid file type. Please upload a JPG, PNG, Webp or GIF file.');
     }
 
     // Check file size (5MB limit)
@@ -20,11 +20,11 @@ export const uploadProfileImage = async (file, userId) => {
     }
 
     // Create unique filename
-    const fileName = `${userId}-${Date.now()}.${fileExt}`;
+const fileName = `public/${userId}/${userId}-${Date.now()}.${fileExt}`;
 
     // Upload file
     const { error: uploadError } = await supabase.storage
-      .from('profile-images')
+      .from('user-images')
       .upload(fileName, file, {
         cacheControl: '3600',
         upsert: true
@@ -34,7 +34,7 @@ export const uploadProfileImage = async (file, userId) => {
 
     // Get public URL
     const { data: { publicUrl } } = supabase.storage
-      .from('profile-images')
+      .from('user-images')
       .getPublicUrl(fileName);
 
     return publicUrl;
@@ -49,7 +49,7 @@ export const getImageUrl = (imagePath) => {
   if (!imagePath) return null;
   
   const { data: { publicUrl } } = supabase.storage
-    .from('profile-images')
+    .from('user-images')
     .getPublicUrl(imagePath);
     
   return publicUrl;
@@ -61,7 +61,7 @@ export const deleteProfileImage = async (imagePath) => {
 
   try {
     const { error } = await supabase.storage
-      .from('profile-images')
+      .from('user-images')
       .remove([imagePath]);
 
     if (error) throw error;
