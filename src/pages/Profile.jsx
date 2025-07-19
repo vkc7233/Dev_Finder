@@ -1,59 +1,71 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react";
+import { toast } from "react-hot-toast";
 import {
-  ArrowLeft, Calendar, Camera, Github, Linkedin, Globe, MapPin,
-  Code, Briefcase, GraduationCap, Star, Plus, X
-} from 'lucide-react';
-import { supabase } from '../utils/supabase';
-import { useAuth } from '../context/AuthContext';
-import { uploadProfileImage, deleteProfileImage } from '../utils/imageHelpers';
-
-
+  ArrowLeft,
+  Calendar,
+  Camera,
+  Github,
+  Linkedin,
+  Globe,
+  MapPin,
+  Code,
+  Briefcase,
+  GraduationCap,
+  Star,
+  Plus,
+  X,
+} from "lucide-react";
+import { supabase } from "../utils/supabase";
+import { useAuth } from "../context/AuthContext";
+import { uploadProfileImage, deleteProfileImage } from "../utils/imageHelpers";
 
 const Profile = () => {
   const { user } = useAuth();
 
   const [formData, setFormData] = useState({
-    image: '',
-    name: user?.fullname || '',
-    dob: '',
-    gender: '',
-    jobTitle: '',
-    company: '',
-    location: '',
-    bio: '',
-    experienceLevel: '',
-    yearsOfExperience: '',
-    education: '',
-    github: '',
-    linkedin: '',
-    portfolio: '',
-    lookingFor: '',
-    availability: ''
+    image: "",
+    name: user?.fullname || "",
+    dob: "",
+    gender: "",
+    jobTitle: "",
+    company: "",
+    location: "",
+    bio: "",
+    experienceLevel: "",
+    yearsOfExperience: "",
+    education: "",
+    github: "",
+    linkedin: "",
+    portfolio: "",
+    lookingFor: "",
+    availability: "",
   });
 
-  const [skills, setSkills] = useState(['JavaScript', 'React', 'Node.js']);
-  const [interests, setInterests] = useState(['Open Source', 'AI/ML']);
-  const [currentLearning, setCurrentLearning] = useState(['Next.js', 'TypeScript']);
+  const [skills, setSkills] = useState(["JavaScript", "React", "Node.js"]);
+  const [interests, setInterests] = useState(["Open Source", "AI/ML"]);
+  const [currentLearning, setCurrentLearning] = useState([
+    "Next.js",
+    "TypeScript",
+  ]);
 
-  const [newSkill, setNewSkill] = useState('');
-  const [newInterest, setNewInterest] = useState('');
-  const [newLearning, setNewLearning] = useState('');
-  const [submitMessage, setSubmitMessage] = useState({ type: '', text: '' }); // Add this state
+  const [newSkill, setNewSkill] = useState("");
+  const [newInterest, setNewInterest] = useState("");
+  const [newLearning, setNewLearning] = useState("");
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const addItem = (item, setItem, items, setItems) => {
     if (item.trim() && !items.includes(item.trim())) {
       setItems([...items, item.trim()]);
-      setItem('');
+      setItem("");
     }
   };
 
   const removeItem = (itemToRemove, items, setItems) => {
-    setItems(items.filter(item => item !== itemToRemove));
+    setItems(items.filter((item) => item !== itemToRemove));
   };
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
@@ -65,13 +77,15 @@ const Profile = () => {
       // Optionally delete old image if you store paths, not just URLs
       // await deleteProfileImage(oldImagePath);
 
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        image: newImageUrl
+        image: newImageUrl,
       }));
-      console.log('Image uploaded successfully!');
+      console.log("Image uploaded successfully!");
+      toast.success("Image uploaded successfully!");
     } catch (error) {
-      console.log('Failed to upload image: ' + error.message);
+      console.log("Failed to upload image: " + error.message);
+      toast.error("Failed to upload image");
     }
   };
 
@@ -100,20 +114,36 @@ const Profile = () => {
       looking_for: formData.lookingFor,
     };
 
-    const { error } = await supabase
-      .from('user_profiles')
-      .upsert(profileData, { onConflict: ['id'] });
+    const today = new Date();
+    const dob = new Date(formData.dob);
+    const ageDiff = today.getFullYear() - dob.getFullYear();
+    const hasHadBirthdayThisYear =
+      today.getMonth() > dob.getMonth() ||
+      (today.getMonth() === dob.getMonth() && today.getDate() >= dob.getDate());
+    const actualAge = hasHadBirthdayThisYear ? ageDiff : ageDiff - 1;
 
-    console.log("Submitting profile data:", profileData);
-    if (error) {
-      setSubmitMessage({ type: 'error', text: 'Failed to save profile: ' + error.message });
-      console.error('Error saving profile:', error.message);
-    } else {
-      setSubmitMessage({ type: 'success', text: 'Profile updated successfully!' });
-      console.log('Profile updated successfully!');
+    if (actualAge < 18) {
+      toast.error("You must be at least 18 years old to register.");
+      return;
     }
 
+    console.log("Submitting profile data:", profileData);
 
+    const upsertPromise = supabase
+      .from("user_profiles")
+      .upsert(profileData, { onConflict: ["id"] });
+
+    toast.promise(upsertPromise, {
+      loading: "Saving profile...",
+      success: "Profile saved successfully!",
+      error: "Failed to save profile.",
+    });
+
+    const { error } = await upsertPromise;
+
+    if (error) {
+      console.error("Error saving profile:", error.message);
+    }
   };
 
   useEffect(() => {
@@ -121,13 +151,13 @@ const Profile = () => {
       if (!user?.id) return;
 
       const { data, error } = await supabase
-        .from('user_profiles')
-        .select('*')
-        .eq('id', user.id)
+        .from("user_profiles")
+        .select("*")
+        .eq("id", user.id)
         .single();
 
       if (data) {
-        setFormData(prev => ({
+        setFormData((prev) => ({
           ...prev,
           image: data.profile_image || prev.image,
           dob: data.dob || prev.dob,
@@ -136,7 +166,8 @@ const Profile = () => {
           company: data.company || prev.company,
           location: data.location || prev.location,
           bio: data.bio || prev.bio,
-          yearsOfExperience: data.years_of_experience?.toString() || prev.yearsOfExperience,
+          yearsOfExperience:
+            data.years_of_experience?.toString() || prev.yearsOfExperience,
           education: data.education || prev.education,
           github: data.github_url || prev.github,
           linkedin: data.linkedin_url || prev.linkedin,
@@ -157,19 +188,22 @@ const Profile = () => {
   const addSkill = () => addItem(newSkill, setNewSkill, skills, setSkills);
   const removeSkill = (skill) => removeItem(skill, skills, setSkills);
 
-  const addInterest = () => addItem(newInterest, setNewInterest, interests, setInterests);
-  const removeInterest = (interest) => removeItem(interest, interests, setInterests);
+  const addInterest = () =>
+    addItem(newInterest, setNewInterest, interests, setInterests);
+  const removeInterest = (interest) =>
+    removeItem(interest, interests, setInterests);
 
-  const addLearning = () => addItem(newLearning, setNewLearning, currentLearning, setCurrentLearning);
-  const removeLearning = (learning) => removeItem(learning, currentLearning, setCurrentLearning);
-
+  const addLearning = () =>
+    addItem(newLearning, setNewLearning, currentLearning, setCurrentLearning);
+  const removeLearning = (learning) =>
+    removeItem(learning, currentLearning, setCurrentLearning);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
       <div className="min-h-screen bg-[#0f0f0f] text-white">
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-4xl mx-auto">
-
+            {" "}
             {/* Header */}
             <div className="text-center mb-8">
               <h1 className="text-4xl font-bold text-white mb-2">
@@ -177,7 +211,6 @@ const Profile = () => {
               </h1>
               <p className="text-gray-400">Customize Your Developer Identity</p>
             </div>
-
             <div className="space-y-6">
               {/* Profile Picture Section */}
               <div className="bg-[#1c1c1c] rounded-xl p-4 border border-gray-800">
@@ -191,7 +224,7 @@ const Profile = () => {
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <span>{formData.name?.charAt(0) || 'U'}</span>
+                        <span>{formData.name?.charAt(0) || "U"}</span>
                       )}
                     </div>
 
@@ -205,10 +238,11 @@ const Profile = () => {
                       />
                     </label>
                   </div>
-                  <p className="text-gray-400 text-sm">Click camera icon to update profile picture</p>
+                  <p className="text-gray-400 text-sm">
+                    Click camera icon to update profile picture
+                  </p>
                 </div>
               </div>
-
 
               {/* Basic Information */}
               <div className="bg-[#1c1c1c] rounded-xl p-6 border border-gray-800">
@@ -239,7 +273,7 @@ const Profile = () => {
                     <input
                       type="date"
                       name="dob"
-                      value={formData.dob || ''}
+                      value={formData.dob || ""}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 bg-[#2b2b2b] border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition duration-200"
                     />
@@ -250,11 +284,10 @@ const Profile = () => {
                     </label>
                     <select
                       name="gender"
-                      value={formData.gender || ''}
+                      value={formData.gender || ""}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 bg-[#2b2b2b] border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500 transition duration-200"
                     >
-
                       <option value="">Select Gender</option>
                       <option value="male">Male</option>
                       <option value="female">Female</option>
@@ -385,7 +418,9 @@ const Profile = () => {
                     type="text"
                     value={newSkill}
                     onChange={(e) => setNewSkill(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addSkill())}
+                    onKeyPress={(e) =>
+                      e.key === "Enter" && (e.preventDefault(), addSkill())
+                    }
                     className="flex-1 px-4 py-2 bg-[#2b2b2b] border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition duration-200"
                     placeholder="Add a skill (e.g., JavaScript, React, Python)"
                   />
@@ -501,7 +536,9 @@ const Profile = () => {
                       type="text"
                       value={newInterest}
                       onChange={(e) => setNewInterest(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addInterest())}
+                      onKeyPress={(e) =>
+                        e.key === "Enter" && (e.preventDefault(), addInterest())
+                      }
                       className="flex-1 px-3 py-2 bg-[#2b2b2b] border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition duration-200 text-sm"
                       placeholder="Add interest"
                     />
@@ -545,7 +582,9 @@ const Profile = () => {
                       type="text"
                       value={newLearning}
                       onChange={(e) => setNewLearning(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addLearning())}
+                      onKeyPress={(e) =>
+                        e.key === "Enter" && (e.preventDefault(), addLearning())
+                      }
                       className="flex-1 px-3 py-2 bg-[#2b2b2b] border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition duration-200 text-sm"
                       placeholder="Add technology"
                     />
@@ -562,7 +601,9 @@ const Profile = () => {
 
               {/* Preferences */}
               <div className="bg-[#1c1c1c] rounded-xl p-6 border border-gray-800">
-                <h2 className="text-2xl font-bold text-white mb-6">Preferences & Goals</h2>
+                <h2 className="text-2xl font-bold text-white mb-6">
+                  Preferences & Goals
+                </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
@@ -571,7 +612,7 @@ const Profile = () => {
                     </label>
                     <select
                       name="lookingFor"
-                      value={formData.lookingFor || ''}
+                      value={formData.lookingFor || ""}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 bg-[#2b2b2b] border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500 transition duration-200"
                     >
@@ -579,7 +620,9 @@ const Profile = () => {
                       <option value="networking">Networking</option>
                       <option value="collaboration">Collaboration</option>
                       <option value="mentorship">Mentorship</option>
-                      <option value="job-opportunities">Job Opportunities</option>
+                      <option value="job-opportunities">
+                        Job Opportunities
+                      </option>
                       <option value="learning">Learning Partners</option>
                     </select>
                   </div>
@@ -590,13 +633,17 @@ const Profile = () => {
                     </label>
                     <select
                       name="availability"
-                      value={formData.availability || ''}
+                      value={formData.availability || ""}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 bg-[#2b2b2b] border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500 transition duration-200"
                     >
                       <option value="">Select Availability</option>
-                      <option value="available-for-projects">Available for Projects</option>
-                      <option value="open-to-opportunities">Open to Opportunities</option>
+                      <option value="available-for-projects">
+                        Available for Projects
+                      </option>
+                      <option value="open-to-opportunities">
+                        Open to Opportunities
+                      </option>
                       <option value="networking-only">Networking Only</option>
                       <option value="not-available">Not Available</option>
                     </select>
@@ -604,17 +651,18 @@ const Profile = () => {
                 </div>
               </div>
 
-              {/* Message above submit button */}
+              {/* Message above submit button 
               {submitMessage.text && (
                 <div
-                  className={`mb-4 px-4 py-3 rounded-lg text-center font-semibold ${submitMessage.type === 'success'
-                    ? 'bg-green-600/20 text-green-400'
-                    : 'bg-red-600/20 text-red-400'
-                    }`}
+                  className={`mb-4 px-4 py-3 rounded-lg text-center font-semibold ${
+                    submitMessage.type === "success"
+                      ? "bg-green-600/20 text-green-400"
+                      : "bg-red-600/20 text-red-400"
+                  }`}
                 >
                   {submitMessage.text}
                 </div>
-              )}
+              )}*/}
 
               {/* Submit Button */}
               <div className="flex justify-center">

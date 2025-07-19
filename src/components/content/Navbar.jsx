@@ -1,18 +1,17 @@
-import React, { useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { supabase } from '../../utils/supabase';
-import { toast } from 'react-toastify';
-import { useAuth } from '../../context/AuthContext';
+import React, { useCallback } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { supabase } from "../../utils/supabase";
+import { toast } from "react-hot-toast";
+import { useAuth } from "../../context/AuthContext";
 import { FaUserLarge } from "react-icons/fa6";
 import { IoSettingsOutline } from "react-icons/io5";
 
-
-
 const getGreetingMessage = (user) => {
-  return `Welcome, ${user?.fullname || 'Developer'} !`;
+  const FirstName = user?.fullname?.split(" ")[0];
+  return `Welcome, ${FirstName || "Developer"} !`;
 };
 
-const MainNavbar = () => {
+const Navbar = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -21,19 +20,21 @@ const MainNavbar = () => {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
       navigate("/login");
+      toast.success("Logged out successfully!");
     } catch (error) {
-      console.error('Logout failed:', error.message);
-      toast.error('Logout failed. Please try again.');
+      console.error("Logout failed:", error.message);
+      toast.error("Logout failed. Please try again.");
     }
   }, [navigate]);
 
   return (
     // Navbar container: Provides the main structure and styling for the navigation bar
     <div className="navbar bg-base-200 shadow-sm px-4 py-4">
-
       {/* Left section: Contains the brand logo and link to the homepage */}
       <div className="flex-1">
-        <Link to="/" className="btn btn-ghost text-2xl">DevTinder</Link>
+        <Link to="/" className="btn btn-ghost text-2xl">
+          DevTinder
+        </Link>
       </div>
 
       {/* Middle section: Placeholder for navigation links (currently commented out) */}
@@ -51,7 +52,7 @@ const MainNavbar = () => {
             <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
               <div className="w-10 h-10 rounded-full">
                 <img
-                  alt="User Avatar"
+                  alt={`${user?.fullname || "User"}'s avatar`}
                   src={
                     user?.profile_data?.profile_image ||
                     "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
@@ -59,22 +60,36 @@ const MainNavbar = () => {
                 />
               </div>
             </label>
-            <ul tabIndex={0} className="mt-3 z-10 p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52">
+            <ul
+              tabIndex={0}
+              className="mt-3 z-10 p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 right-0"
+            >
               <li>
-                <p className="font-semibold text-lg text-center">{getGreetingMessage(user)}</p>
+                <p className="font-semibold text-lg text-center">
+                  {getGreetingMessage(user)}
+                </p>
               </li>
               <li>
-                <Link className='text-base flex items-center justify-between w-full' to="/profile">
+                <Link
+                  className="text-base flex items-center justify-between w-full"
+                  to="/profile"
+                >
                   Profile <FaUserLarge />
                 </Link>
               </li>
               <li>
-                <Link className='text-base flex items-center justify-between w-full' to="/settings">
+                <Link
+                  className="text-base flex items-center justify-between w-full"
+                  to="/settings"
+                >
                   Settings <IoSettingsOutline />
                 </Link>
               </li>
               <li>
-                <button onClick={handleLogout} className="btn btn-primary mt-2 font-bold w-full">
+                <button
+                  onClick={handleLogout}
+                  className="btn btn-primary mt-2 font-bold w-full"
+                >
                   Logout
                 </button>
               </li>
@@ -82,8 +97,12 @@ const MainNavbar = () => {
           </div>
         ) : (
           <div className="flex gap-2">
-            <Link to="/login" className="btn btn-outline btn-md">Login</Link>
-            <Link to="/register" className="btn btn-outline btn-md">Register</Link>
+            <Link to="/login" className="btn btn-outline btn-md">
+              Login
+            </Link>
+            <Link to="/register" className="btn btn-outline btn-md">
+              Register
+            </Link>
           </div>
         )}
       </div>
@@ -91,8 +110,4 @@ const MainNavbar = () => {
   );
 };
 
-export default MainNavbar;
-
-
-
-
+export default Navbar;

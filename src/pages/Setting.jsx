@@ -1,22 +1,32 @@
-import React, { useState } from 'react';
-import { ArrowLeft, Eye, EyeOff, Mail, Lock, Bell, Save, Check } from 'lucide-react';
+import React, { useState } from "react";
+import { toast } from "react-hot-toast";
+import {
+  ArrowLeft,
+  Eye,
+  EyeOff,
+  Mail,
+  Lock,
+  Bell,
+  Save,
+  Check,
+} from "lucide-react";
 
 const Setting = () => {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [saveStatus, setSaveStatus] = useState('');
+  const [saveStatus, setSaveStatus] = useState("");
 
   // Form states
   const [passwordData, setPasswordData] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: ''
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
   });
 
   const [emailData, setEmailData] = useState({
-    currentEmail: 'alex.johnson@example.com',
-    newEmail: ''
+    currentEmail: "alex.johnson@example.com",
+    newEmail: "",
   });
 
   const [notifications, setNotifications] = useState({
@@ -25,34 +35,34 @@ const Setting = () => {
     profileViews: false,
     weeklyDigest: true,
     emailNotifications: true,
-    pushNotifications: true
+    pushNotifications: true,
   });
 
   const handlePasswordChange = (field, value) => {
-    setPasswordData(prev => ({
+    setPasswordData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
   const handleEmailChange = (value) => {
-    setEmailData(prev => ({
+    setEmailData((prev) => ({
       ...prev,
-      newEmail: value
+      newEmail: value,
     }));
   };
 
   const handleNotificationToggle = (setting) => {
-    setNotifications(prev => ({
+    setNotifications((prev) => ({
       ...prev,
-      [setting]: !prev[setting]
+      [setting]: !prev[setting],
     }));
   };
 
   const handleSave = (section) => {
     setSaveStatus(section);
     setTimeout(() => {
-      setSaveStatus('');
+      setSaveStatus("");
     }, 2000);
   };
 
@@ -60,12 +70,12 @@ const Setting = () => {
     <button
       onClick={onToggle}
       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${
-        enabled ? 'bg-blue-500' : 'bg-gray-600'
+        enabled ? "bg-blue-500" : "bg-gray-600"
       }`}
     >
       <span
         className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${
-          enabled ? 'translate-x-6' : 'translate-x-1'
+          enabled ? "translate-x-6" : "translate-x-1"
         }`}
       />
     </button>
@@ -96,13 +106,13 @@ const Setting = () => {
       <div className="border-b border-gray-800 bg-[#0f0f0f] sticky top-0 z-10">
         <div className="container mx-auto px-4">
           <div className="flex items-center h-16">
-            <button 
+            <button
               className="mr-4 p-2 hover:bg-gray-800 rounded-lg transition-colors group"
               onClick={() => window.history.back()}
             >
-              <ArrowLeft 
-                size={20} 
-                className="text-gray-400 group-hover:text-blue-500 transition-colors" 
+              <ArrowLeft
+                size={20}
+                className="text-gray-400 group-hover:text-blue-500 transition-colors"
               />
             </button>
             <div className="flex items-center gap-2">
@@ -131,9 +141,11 @@ const Setting = () => {
               </label>
               <div className="relative">
                 <input
-                  type={showCurrentPassword ? 'text' : 'password'}
+                  type={showCurrentPassword ? "text" : "password"}
                   value={passwordData.currentPassword}
-                  onChange={(e) => handlePasswordChange('currentPassword', e.target.value)}
+                  onChange={(e) =>
+                    handlePasswordChange("currentPassword", e.target.value)
+                  }
                   className="w-full bg-[#2b2b2b] border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
                   placeholder="Enter current password"
                 />
@@ -142,7 +154,11 @@ const Setting = () => {
                   onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-300"
                 >
-                  {showCurrentPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  {showCurrentPassword ? (
+                    <EyeOff size={18} />
+                  ) : (
+                    <Eye size={18} />
+                  )}
                 </button>
               </div>
             </div>
@@ -153,9 +169,11 @@ const Setting = () => {
               </label>
               <div className="relative">
                 <input
-                  type={showNewPassword ? 'text' : 'password'}
+                  type={showNewPassword ? "text" : "password"}
                   value={passwordData.newPassword}
-                  onChange={(e) => handlePasswordChange('newPassword', e.target.value)}
+                  onChange={(e) =>
+                    handlePasswordChange("newPassword", e.target.value)
+                  }
                   className="w-full bg-[#2b2b2b] border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
                   placeholder="Enter new password"
                 />
@@ -175,9 +193,11 @@ const Setting = () => {
               </label>
               <div className="relative">
                 <input
-                  type={showConfirmPassword ? 'text' : 'password'}
+                  type={showConfirmPassword ? "text" : "password"}
                   value={passwordData.confirmPassword}
-                  onChange={(e) => handlePasswordChange('confirmPassword', e.target.value)}
+                  onChange={(e) =>
+                    handlePasswordChange("confirmPassword", e.target.value)
+                  }
                   className="w-full bg-[#2b2b2b] border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
                   placeholder="Confirm new password"
                 />
@@ -186,7 +206,11 @@ const Setting = () => {
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-300"
                 >
-                  {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  {showConfirmPassword ? (
+                    <EyeOff size={18} />
+                  ) : (
+                    <Eye size={18} />
+                  )}
                 </button>
               </div>
             </div>
@@ -255,44 +279,52 @@ const Setting = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="font-medium text-white">Project Matches</h3>
-                <p className="text-sm text-gray-400">Get notified when you match with potential collaborators</p>
+                <p className="text-sm text-gray-400">
+                  Get notified when you match with potential collaborators
+                </p>
               </div>
               <ToggleSwitch
                 enabled={notifications.newMatches}
-                onToggle={() => handleNotificationToggle('newMatches')}
+                onToggle={() => handleNotificationToggle("newMatches")}
               />
             </div>
 
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="font-medium text-white">Messages</h3>
-                <p className="text-sm text-gray-400">New message notifications</p>
+                <p className="text-sm text-gray-400">
+                  New message notifications
+                </p>
               </div>
               <ToggleSwitch
                 enabled={notifications.messages}
-                onToggle={() => handleNotificationToggle('messages')}
+                onToggle={() => handleNotificationToggle("messages")}
               />
             </div>
 
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="font-medium text-white">Profile Views</h3>
-                <p className="text-sm text-gray-400">When someone views your profile</p>
+                <p className="text-sm text-gray-400">
+                  When someone views your profile
+                </p>
               </div>
               <ToggleSwitch
                 enabled={notifications.profileViews}
-                onToggle={() => handleNotificationToggle('profileViews')}
+                onToggle={() => handleNotificationToggle("profileViews")}
               />
             </div>
 
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="font-medium text-white">Weekly Digest</h3>
-                <p className="text-sm text-gray-400">Weekly summary of your activity</p>
+                <p className="text-sm text-gray-400">
+                  Weekly summary of your activity
+                </p>
               </div>
               <ToggleSwitch
                 enabled={notifications.weeklyDigest}
-                onToggle={() => handleNotificationToggle('weeklyDigest')}
+                onToggle={() => handleNotificationToggle("weeklyDigest")}
               />
             </div>
 
@@ -301,22 +333,26 @@ const Setting = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="font-medium text-white">Email Notifications</h3>
-                <p className="text-sm text-gray-400">Receive notifications via email</p>
+                <p className="text-sm text-gray-400">
+                  Receive notifications via email
+                </p>
               </div>
               <ToggleSwitch
                 enabled={notifications.emailNotifications}
-                onToggle={() => handleNotificationToggle('emailNotifications')}
+                onToggle={() => handleNotificationToggle("emailNotifications")}
               />
             </div>
 
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="font-medium text-white">Push Notifications</h3>
-                <p className="text-sm text-gray-400">Mobile push notifications</p>
+                <p className="text-sm text-gray-400">
+                  Mobile push notifications
+                </p>
               </div>
               <ToggleSwitch
                 enabled={notifications.pushNotifications}
-                onToggle={() => handleNotificationToggle('pushNotifications')}
+                onToggle={() => handleNotificationToggle("pushNotifications")}
               />
             </div>
 
@@ -331,7 +367,7 @@ const Setting = () => {
         {/* Save Changes Button */}
         <div className="flex justify-center pt-4">
           <button
-            onClick={() => handleSave('all')}
+            onClick={() => handleSave("all")}
             className="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold rounded-lg transition-all duration-300 transform hover:scale-105 hover:from-blue-700 hover:to-blue-800 shadow-lg"
           >
             <Save size={18} className="inline-block mr-2" />

@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useMemo } from "react";
+import { toast } from "react-hot-toast";
+
 import { supabase } from "../utils/supabase";
 import { Search, Rocket, Stars } from "lucide-react";
 import ProfileCard from "../components/ProfileCard";
 
 const formatUserProfiles = (rawData) => {
   if (!rawData) return [];
-  
+
   return rawData.map((u) => ({
     id: u.id,
     name: u.fullname || "Developer",
@@ -65,23 +67,27 @@ const ExploreGalaxy = () => {
 
     async function fetchUsers() {
       try {
-        const { data: { user }, error: userErr } = await supabase.auth.getUser();
+        const {
+          data: { user },
+          error: userErr,
+        } = await supabase.auth.getUser();
         if (userErr) throw userErr;
         if (!user) throw new Error("No authenticated user found");
-        
+
         if (mounted) setCurrentUserId(user.id);
 
         const { data, error: fetchErr } = await supabase
           .from("user_auth")
           .select("id, fullname, user_profiles(*)")
           .neq("id", user.id);
-        
+
         if (fetchErr) throw fetchErr;
 
         const formattedUsers = formatUserProfiles(data);
         if (mounted) setUsers(formattedUsers);
       } catch (err) {
         console.error("Error fetching users:", err);
+        toast.error("Failed to load users. Please try again.");
         if (mounted) setError(err.message);
       } finally {
         if (mounted) setLoading(false);
@@ -90,7 +96,9 @@ const ExploreGalaxy = () => {
 
     fetchUsers();
 
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   useEffect(() => {
@@ -101,7 +109,6 @@ const ExploreGalaxy = () => {
     if (!filteredUsers.length) return;
     setCurrentIndex((prev) => (prev + 1) % filteredUsers.length);
   };
-
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-slate-900 to-black text-white relative overflow-x-hidden">
@@ -116,7 +123,8 @@ const ExploreGalaxy = () => {
             </span>
           </h1>
           <p className="text-lg text-slate-300 mt-2">
-            Explore the galaxy of developers to connect, collaborate & conquer 🚀
+            Explore the galaxy of developers to connect, collaborate & conquer
+            🚀
           </p>
         </div>
         <div className="max-w-2xl mx-auto mb-6 relative group">
@@ -150,7 +158,7 @@ const ExploreGalaxy = () => {
         {/* card display */}
         {!loading && !error && (
           <div className="flex justify-center">
-            {filteredUsers.length > 0 &&  filteredUsers[currentIndex] ? (
+            {filteredUsers.length > 0 && filteredUsers[currentIndex] ? (
               <ProfileCard
                 key={filteredUsers[currentIndex].id}
                 profile={filteredUsers[currentIndex]}
