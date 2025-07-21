@@ -163,6 +163,7 @@ const ExploreGalaxy = () => {
                 key={filteredUsers[currentIndex].id}
                 profile={filteredUsers[currentIndex]}
                 onSwipe={handleSwipe}
+                currentUserId={currentUserId}
               />
             ) : (
               <div className="text-center text-slate-400 mt-24">

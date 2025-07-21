@@ -132,13 +132,6 @@ const Home = () => {
 
   return (
     <div className="bg-gray-900 text-white min-h-screen overflow-hidden">
-      {/* Background Elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 -left-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-        <div className="absolute top-1/3 -right-32 w-72 h-72 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
-        <div className="absolute -bottom-32 left-1/3 w-96 h-96 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-pulse animation-delay-4000"></div>
-      </div>
-
       {/* Hero Section */}
       <section className="relative pt-0 px-6 py-20 md:py-32 text-center min-h-screen flex items-center justify-center">
         {/* Glass morphism overlay */}

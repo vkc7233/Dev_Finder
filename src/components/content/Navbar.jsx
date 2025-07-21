@@ -86,6 +86,14 @@ const Navbar = () => {
                 </Link>
               </li>
               <li>
+                <Link
+                  className="text-base flex items-center justify-between w-full"
+                  to="/requests"
+                >
+                  Requests
+                </Link>
+              </li>
+              <li>
                 <button
                   onClick={handleLogout}
                   className="btn btn-primary mt-2 font-bold w-full"

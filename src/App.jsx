@@ -11,6 +11,7 @@ import PrivateRoute from "./components/Auth/PrivateRoutes";
 import { AuthProvider } from "./context/AuthContext";
 import Signup from "./components/Auth/Signup";
 import Explore from "./pages/Explore";
+import ConnectionRequests from "./pages/ConnectionRequest";
 
 const App = () => {
   return (
@@ -62,6 +63,14 @@ const App = () => {
               element={
                 <PrivateRoute>
                   <Explore />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="requests"
+              element={
+                <PrivateRoute>
+                  <ConnectionRequests />
                 </PrivateRoute>
               }
             />

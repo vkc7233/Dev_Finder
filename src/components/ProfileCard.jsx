@@ -14,8 +14,9 @@ import {
   Award,
   Calendar,
 } from "lucide-react";
+import { supabase } from "../utils/supabase";
 
-const ProfileCard = ({ profile, onSwipe }) => {
+const ProfileCard = ({ profile, onSwipe, currentUserId }) => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [swipeDirection, setSwipeDirection] = useState("");
 
@@ -71,10 +72,27 @@ const ProfileCard = ({ profile, onSwipe }) => {
 
   const accent = getAccentColors(profile.accentColor || "blue");
 
-  const handleSwipe = (direction) => {
+  const handleSwipe = async (direction) => {
     if (isAnimating) return;
     setIsAnimating(true);
     setSwipeDirection(direction);
+    // Handle swipe logic here
+    if (direction === "right") {
+      try {
+        const { data, error } = await supabase.from("connections").insert([
+          {
+            sender_id: currentUserId, // You'll pass this as a prop
+            receiver_id: profile.id, // The person being liked
+            status: "pending",
+          },
+        ]);
+
+        if (error) throw error;
+        console.log("Connection request sent!", data);
+      } catch (err) {
+        console.error("Error sending request:", err.message);
+      }
+    }
     setTimeout(() => {
       onSwipe?.();
       setIsAnimating(false);
