@@ -138,9 +138,8 @@ const Home = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-gray-900/50 via-gray-800/30 to-gray-900/50 backdrop-blur-sm"></div>
 
         <div
-          className={`relative z-10 max-w-6xl mx-auto transition-all duration-1000 transform ${
-            isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
-          }`}
+          className={`relative z-10 max-w-6xl mx-auto transition-all duration-1000 transform ${isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
+            }`}
         >
           {/* Main heading with gradient text */}
           <div className="mb-8">
@@ -262,16 +261,14 @@ const Home = () => {
                 {/* Online status */}
                 <div className="absolute top-4 right-4">
                   <div
-                    className={`flex items-center space-x-1 ${
-                      match.online ? "text-green-400" : "text-gray-500"
-                    }`}
+                    className={`flex items-center space-x-1 ${match.online ? "text-green-400" : "text-gray-500"
+                      }`}
                   >
                     <div
-                      className={`w-2 h-2 rounded-full ${
-                        match.online
-                          ? "bg-green-400 animate-pulse"
-                          : "bg-gray-500"
-                      }`}
+                      className={`w-2 h-2 rounded-full ${match.online
+                        ? "bg-green-400 animate-pulse"
+                        : "bg-gray-500"
+                        }`}
                     ></div>
                     <span className="text-xs">
                       {match.online ? "Online" : "Offline"}
@@ -294,13 +291,12 @@ const Home = () => {
                 {/* Match type badge */}
                 <div className="mb-4">
                   <span
-                    className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                      match.matchType === "Collaboration"
-                        ? "bg-blue-500/20 text-blue-400 border border-blue-500/30"
-                        : match.matchType === "Mentorship"
+                    className={`px-3 py-1 rounded-full text-xs font-semibold ${match.matchType === "Collaboration"
+                      ? "bg-blue-500/20 text-blue-400 border border-blue-500/30"
+                      : match.matchType === "Mentorship"
                         ? "bg-purple-500/20 text-purple-400 border border-purple-500/30"
                         : "bg-green-500/20 text-green-400 border border-green-500/30"
-                    }`}
+                      }`}
                   >
                     {match.matchType}
                   </span>
@@ -371,11 +367,10 @@ const Home = () => {
                             {chat.name}
                           </p>
                           <p
-                            className={`text-sm ${
-                              chat.unread
-                                ? "text-white font-medium"
-                                : "text-gray-400"
-                            }`}
+                            className={`text-sm ${chat.unread
+                              ? "text-white font-medium"
+                              : "text-gray-400"
+                              }`}
                           >
                             {chat.message}
                           </p>
@@ -417,11 +412,10 @@ const Home = () => {
                         </p>
                       </div>
                       <span
-                        className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                          project.status.includes("Looking")
-                            ? "bg-green-500/20 text-green-400 border border-green-500/30"
-                            : "bg-blue-500/20 text-blue-400 border border-blue-500/30"
-                        }`}
+                        className={`px-2 py-1 rounded-full text-xs font-semibold ${project.status.includes("Looking")
+                          ? "bg-green-500/20 text-green-400 border border-green-500/30"
+                          : "bg-blue-500/20 text-blue-400 border border-blue-500/30"
+                          }`}
                       >
                         {project.status}
                       </span>
@@ -511,72 +505,4 @@ const Home = () => {
     </div>
   );
 };
-
 export default Home;
-
-/* import React from "react";
-import { Link } from "react-router-dom";
-
-// Reusable stats data
-const stats = [
-  { value: "1,200+", label: "Active Developers" },
-  { value: "350+", label: "Projects Completed" },
-  { value: "95%", label: "Success Rate" },
-  { value: "34", label: "Live Connections" },
-];
-
-const Home = () => {
-  return (
-    <div className="bg-gray-900 text-white min-h-screen">
-      <section className="px-6 py-20 md:py-32 text-center bg-gradient-to-br from-gray-900 to-gray-800 relative overflow-hidden">
-        <div
-          className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"
-          aria-hidden="true"
-        />
-
-        <div className="relative z-10 max-w-4xl mx-auto">
-          <h1 className="text-4xl md:text-6xl font-extrabold mb-6 leading-tight">
-            Connect with Developers. <br /> Build Amazing Projects Together.
-          </h1>
-          <p className="text-lg md:text-xl mb-8 text-gray-300">
-            DevTinder helps you find passionate devs to collaborate, innovate,
-            and launch something extraordinary.
-          </p>
-          <div className="flex justify-center gap-6 flex-wrap">
-            <Link
-              to="/register"
-              className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-400 transition rounded-full text-lg font-medium"
-              aria-label="Join as Developer"
-            >
-              Join as Developer
-            </Link>
-            <Link
-              to="/explore"
-              className="px-6 py-3 border border-indigo-500 hover:bg-indigo-600 hover:text-white focus:ring-4 focus:ring-indigo-400 transition rounded-full text-lg font-medium"
-              aria-label="Find Developers"
-            >
-              Find Developers
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-16 bg-gray-800">
-        <div className="max-w-6xl mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold mb-12">Platform Impact</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 text-xl font-semibold">
-            {stats.map(({ value, label }) => (
-              <div key={label}>
-                <h3 className="text-indigo-400 text-4xl mb-2">{value}</h3>
-                <p>{label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-    </div>
-  );
-};
-
-export default Home;
- */

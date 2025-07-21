@@ -20,6 +20,7 @@ const ProfileCard = ({ profile, onSwipe, currentUserId }) => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [swipeDirection, setSwipeDirection] = useState("");
 
+  // Default values if profile is not loaded yet
   if (!profile) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4 pt-8">
@@ -94,7 +95,7 @@ const ProfileCard = ({ profile, onSwipe, currentUserId }) => {
       }
     }
     setTimeout(() => {
-      onSwipe?.();
+      onSwipe();
       setIsAnimating(false);
     }, 300);
   };
@@ -120,27 +121,27 @@ const ProfileCard = ({ profile, onSwipe, currentUserId }) => {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 pt-8">
       <div className="relative w-full max-w-sm">
-        {/* Card Container */}
+        {/* Main Card */}
         <div
           className={`
-          relative bg-gradient-to-br from-slate-900 to-black rounded-3xl shadow-2xl overflow-hidden transition-all duration-300 transform border border-gray-600/50 backdrop-blur-xl
-          ${
-            isAnimating && swipeDirection === "left"
-              ? "-translate-x-full -rotate-12 opacity-0"
-              : ""
-          }
-          ${
-            isAnimating && swipeDirection === "right"
-              ? "translate-x-full rotate-12 opacity-0"
-              : ""
-          }
-        `}
+                    relative bg-gradient-to-br from-slate-900 to-black rounded-3xl shadow-2xl overflow-hidden transition-all duration-300 transform border border-gray-600/50 backdrop-blur-xl
+                    ${
+                      isAnimating && swipeDirection === "left"
+                        ? "-translate-x-full -rotate-12 opacity-0"
+                        : ""
+                    }
+                    ${
+                      isAnimating && swipeDirection === "right"
+                        ? "translate-x-full rotate-12 opacity-0"
+                        : ""
+                    }
+                `}
         >
           {/* Header */}
           <div
             className={`relative ${
               profile.bgGradient || bgGradients[0]
-            } p-4 text-white`}
+            } p-4 text-white overflow-hidden`}
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-16 translate-x-16"></div>
             <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-12 -translate-x-12"></div>
@@ -150,7 +151,7 @@ const ProfileCard = ({ profile, onSwipe, currentUserId }) => {
                 <div
                   className={`w-3 h-3 rounded-full ${
                     profile.available
-                      ? "bg-green-400 shadow-green-400/50"
+                      ? "bg-green-400 shadow-lg shadow-green-400/50"
                       : "bg-red-500"
                   } animate-pulse`}
                 ></div>
@@ -158,14 +159,13 @@ const ProfileCard = ({ profile, onSwipe, currentUserId }) => {
 
               <div className="flex items-center space-x-4 mb-6">
                 <div
-                  className={`w-28 h-28 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-xl overflow-hidden`}
+                  className={`w-28 h-28 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center text-white text-2xl font-bold border border-white/20 shadow-xl ${accent.bg}`}
                 >
                   <img
                     src={profile.image || "/default-avatar.png"}
                     alt={profile.name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover rounded-md shadow-md"
                     onError={(e) => {
-                      e.target.onerror = null;
                       e.target.src = "/default-avatar.png";
                     }}
                   />
@@ -201,31 +201,44 @@ const ProfileCard = ({ profile, onSwipe, currentUserId }) => {
             </div>
           </div>
 
-          {/* Body */}
-          <div className="p-4 space-y-4 bg-gradient-to-b from-slate-900 to-black -mb-2">
+          {/* Content */}
+          <div className="p-4 space-y-2 bg-gradient-to-b from-slate-900 to-black -mb-2">
             <p className="text-slate-300">
               {profile.bio || "No bio available"}
             </p>
 
-            {["skills", "learning", "interests"].map((type) => (
-              <div key={type}>
-                <h3 className="text-sm font-bold text-white mb-2 flex items-center">
-                  {type === "skills" && <Code size={16} className="mr-2" />}
-                  {type === "learning" && (
-                    <Zap size={16} className="mr-2 text-yellow-400" />
-                  )}
-                  {type === "interests" && (
-                    <Star size={16} className="mr-2 text-yellow-300" />
-                  )}
-                  {type.charAt(0).toUpperCase() + type.slice(1)}
-                </h3>
-                <div className="flex flex-wrap">
-                  {(profile[type] || []).map((item, idx) => (
-                    <SkillTag key={idx} skill={item} type={type} />
-                  ))}
-                </div>
+            <div>
+              <h3 className="text-sm font-bold text-white mb-2 flex items-center">
+                <Code size={16} className="mr-2" /> Tech Stack
+              </h3>
+              <div className="flex flex-wrap">
+                {(profile.skills || []).map((skill, idx) => (
+                  <SkillTag key={idx} skill={skill} type="skills" />
+                ))}
               </div>
-            ))}
+            </div>
+
+            <div>
+              <h3 className="text-sm font-bold text-white mb-2 flex items-center">
+                <Zap size={16} className="mr-2 text-yellow-400" /> Learning
+              </h3>
+              <div className="flex flex-wrap">
+                {(profile.learning || []).map((item, idx) => (
+                  <SkillTag key={idx} skill={item} type="learning" />
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-sm font-bold text-white mb-2 flex items-center">
+                <Star size={16} className="mr-2 text-yellow-300" /> Interests
+              </h3>
+              <div className="flex flex-wrap">
+                {(profile.interests || []).map((item, idx) => (
+                  <SkillTag key={idx} skill={item} type="interests" />
+                ))}
+              </div>
+            </div>
           </div>
 
           {/* Links */}

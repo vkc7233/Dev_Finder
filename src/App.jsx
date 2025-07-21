@@ -7,6 +7,7 @@ import Feed from "./pages/Feed";
 import Profile from "./pages/Profile";
 import Setting from "./pages/Setting";
 import Home from "./pages/Home";
+import LandingPage from "./pages/LandingPage";
 import PrivateRoute from "./components/Auth/PrivateRoutes";
 import { AuthProvider } from "./context/AuthContext";
 import Signup from "./components/Auth/Signup";
@@ -19,18 +20,19 @@ const App = () => {
       <Toaster position="top-center" reverseOrder={false} />
       <AuthProvider>
         <Routes>
-          <Route path="/" element={<Body />}>
-            <Route index element={<Navigate to="/home" replace />} />
-
+          <Route path="/" element={<Home />} />
+          
+          <Route path="/landing" element={<LandingPage />} />
+     
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Signup />} />
             {/*             <Route path="match" element={<Match />} />
              */}
             <Route
-              path="home"
+              path="/"
               element={
                 <PrivateRoute>
-                  <Home />
+                  <Body />
                 </PrivateRoute>
               }
             />
