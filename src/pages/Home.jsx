@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-
+import { Link } from "react-router-dom";
 // Reusable stats data
 const stats = [
   { value: "1,200+", label: "Active Developers" },
@@ -175,21 +175,21 @@ const Home = () => {
 
           {/* CTA Buttons with enhanced styling */}
           <div className="flex justify-center gap-6 flex-wrap mb-16">
-            <button
-              onClick={() => (window.location.href = "/swipe")}
+            <Link
+              to="/explore"
               className="group relative px-8 py-4 bg-gradient-to-r from-pink-600 to-red-600 hover:from-pink-700 hover:to-red-700 focus:ring-4 focus:ring-pink-400/50 transition-all duration-300 rounded-full text-lg font-semibold shadow-2xl transform hover:scale-105 hover:-translate-y-1"
               aria-label="Start Swiping"
             >
               <span className="relative z-10">💖 Compile Connections</span>
               <div className="absolute inset-0 bg-gradient-to-r from-pink-400 to-red-400 rounded-full blur opacity-0 group-hover:opacity-50 transition-opacity duration-300"></div>
-            </button>
-            <button
-              onClick={() => (window.location.href = "/messages")}
+            </Link>
+            <Link
+              to="/chat"
               className="group relative px-8 py-4 bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 hover:border-white/40 focus:ring-4 focus:ring-white/20 transition-all duration-300 rounded-full text-lg font-semibold shadow-xl transform hover:scale-105 hover:-translate-y-1"
               aria-label="Open Messages"
             >
               <span className="relative z-10">💬 Reveal Your Inbox</span>
-            </button>
+            </Link>
           </div>
 
           {/* Floating elements animation */}
@@ -252,12 +252,12 @@ const Home = () => {
                 Looks like you found some gems in the dev pool✨
               </p>
             </div>
-            <a
-              href="/matches"
+            <Link
+              to="/matches"
               className="hidden md:inline-flex items-center px-6 py-3 bg-pink-500/20 backdrop-blur-md border border-pink-500/30 hover:bg-pink-500/30 hover:border-pink-400/50 rounded-full font-semibold transition-all duration-300 hover:-translate-y-1 text-pink-300"
             >
               View All Matches →
-            </a>
+            </Link>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -350,12 +350,12 @@ const Home = () => {
                 <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
                   💬 Active Chats
                 </h2>
-                <a
-                  href="/chat"
+                <Link
+                  to="/chat"
                   className="text-blue-400 hover:text-blue-300 text-sm font-medium"
                 >
                   Slide into DMs✨ →
-                </a>
+                </Link>
               </div>
               <div className="space-y-4">
                 {activeChats.map((chat, index) => (
