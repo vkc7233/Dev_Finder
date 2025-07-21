@@ -6,7 +6,6 @@ import Login from "./components/Auth/Login";
 import Feed from "./pages/Feed";
 import Profile from "./pages/Profile";
 import Setting from "./pages/Setting";
-import Match from "./pages/Match";
 import Home from "./pages/Home";
 import LandingPage from "./pages/LandingPage";
 import PrivateRoute from "./components/Auth/PrivateRoutes";
