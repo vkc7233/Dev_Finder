@@ -7,7 +7,7 @@ import { FaUserLarge } from "react-icons/fa6";
 import { IoSettingsOutline } from "react-icons/io5";
 
 const getGreetingMessage = (user) => {
-  const FirstName = user?.fullname?.split(" ")[0];
+  const FirstName = user.fullname.split(" ")[0];
   return `Welcome, ${FirstName || "Developer"} !`;
 };
 
@@ -26,16 +26,16 @@ const Navbar = () => {
       toast.error("Logout failed. Please try again.");
     }
   }, [navigate]);
-
+  
   return (
     // Navbar container: Provides the main structure and styling for the navigation bar
     <div className="navbar bg-base-200 shadow-sm px-4 py-4">
       {/* Left section: Contains the brand logo and link to the homepage */}
       <div className="flex-1">
         <Link to="/" className="btn btn-ghost text-2xl">Dev<span className="text-blue-500">Tinder</span></Link>
-        <Link to="/" className="btn btn-ghost text-2xl">
+        {/* <Link to="/" className="btn btn-ghost text-2xl">
           DevTinder
-        </Link>
+        </Link> */}
       </div>
 
       {/* Middle section: Placeholder for navigation links (currently commented out) */}
