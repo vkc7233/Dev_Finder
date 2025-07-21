@@ -1,62 +1,179 @@
-import React, { useState } from 'react';
-import { Github, Linkedin, Globe, MapPin, Code, Briefcase, Star, Heart, X, Coffee, Zap, Award, Calendar } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Github, Linkedin, Calendar, Globe, MapPin, Code, Briefcase, Star, Heart, X, Coffee, Zap, Award } from 'lucide-react';
+// import developerProfiles from '../data/developerProfiles';
+import { supabase } from '../utils/supabase';
 
-const ProfileCard = ({ profile, onSwipe }) => {
+const ProfileCard = () => {
+    const [currentCardIndex, setCurrentCardIndex] = useState(0);
     const [isAnimating, setIsAnimating] = useState(false);
     const [swipeDirection, setSwipeDirection] = useState('');
-
-    // Default values if profile is not loaded yet
-    if (!profile) {
-        return (
-            <div className="min-h-screen flex items-center justify-center p-4 pt-8">
-                <div className="w-full max-w-sm bg-slate-900 rounded-3xl p-8 text-center">
-                    <div className="animate-pulse">
-                        <div className="h-8 bg-slate-700 rounded mb-4"></div>
-                        <div className="h-6 bg-slate-700 rounded mb-2"></div>
-                        <div className="h-6 bg-slate-700 rounded mb-2"></div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
+    const [showPopup, setShowPopup] = useState(false);
 
     const bgGradients = [
         'from-slate-900 via-slate-800 to-slate-700',
         'from-indigo-900 via-indigo-800 to-indigo-700',
         'from-zinc-800 via-gray-800 to-slate-900',
         'from-neutral-800 via-neutral-700 to-neutral-600',
+        'from-neutral-800 via-neutral-700 to-neutral-600',
         'from-blue-900 via-sky-800 to-blue-700',
         'from-purple-900 via-fuchsia-800 to-purple-700',
         'from-emerald-900 via-emerald-800 to-emerald-700',
+        'from-rose-900 via-rose-800 to-rose-700',
+        'from-yellow-900 via-amber-800 to-yellow-700',
+        'from-cyan-900 via-cyan-800 to-cyan-700',
+        'from-pink-900 via-pink-800 to-pink-700',
+        'from-green-900 via-teal-800 to-green-700'
     ];
+
+    const accentColors = ['blue', 'purple', 'emerald', 'rose', 'amber', 'cyan', 'pink', 'lime', 'indigo'];
+
+    const [profiles, setProfiles] = useState([]);
+
+    useEffect(() => {
+        const fetchProfiles = async () => {
+            // Fetch all user_auth (for name) and user_profiles (for details)
+            const { data: authData, error: authError } = await supabase
+                .from('user_auth')
+                .select('id, fullname');
+
+            const { data: profileData, error: profileError } = await supabase
+                .from('user_profiles')
+                .select('*');
+
+            if (authError || profileError) {
+                console.error('Error fetching profiles:', authError?.message || profileError?.message);
+                return;
+            }
+            // Merge by user id
+            const merged = profileData.map(profile => {
+                const auth = authData.find(a => a.id === profile.id);
+                return {
+                    ...profile,
+                    name: auth ? `${auth.fullname}` : 'Unknown Developer',
+                    bgGradient: bgGradients[Math.floor(Math.random() * bgGradients.length)],
+                    accentColor: accentColors[Math.floor(Math.random() * accentColors.length)],
+                    skills: profile.skills || [],
+                    years_of_experience: profile.years_of_experience || "0 years",
+                    gender: profile.gender || "Not specified",
+                    interests: profile.interests || [],
+                    dob: profile.dob || "Not specified",
+                    company: profile.company || "Not specified",
+                    location: profile.location || "Not specified",
+                    bio: profile.bio || "No bio available",
+                    learning: profile.current_learning || [],
+                    image: profile.profile_image || "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp",
+                    jobTitle: profile.job_title || "",
+                    github: profile.github_url || "",
+                    linkedin: profile.linkedin_url || "",
+                    portfolio: profile.portfolio_url || "",
+                };
+            });
+            const uniqueMerged = Array.from(new Map(merged.map(p => [p.id, p])).values());
+            setProfiles(uniqueMerged);
+        };
+
+        fetchProfiles();
+    }, []);
+
+
+    const currentProfile = profiles[currentCardIndex];
+    const nextProfile = profiles[(currentCardIndex + 1) % profiles.length];
+    if (!currentProfile) return null;
+
+    const handleSwipe = (direction) => {
+        if (isAnimating) return;
+
+        setIsAnimating(true);
+        setSwipeDirection(direction);
+
+        if (direction === 'right') {
+            setShowPopup(true); // Show popup after swipe right
+        }
+
+        setTimeout(() => {
+            setCurrentCardIndex((prev) => (prev + 1) % profiles.length);
+            setIsAnimating(false);
+            setSwipeDirection('');
+        }, 300);
+    };
+
 
     const getAccentColors = (color) => {
         const colors = {
-            blue: { primary: 'text-blue-400', bg: 'bg-blue-500/20', border: 'border-blue-500/30' },
-            purple: { primary: 'text-purple-400', bg: 'bg-purple-500/20', border: 'border-purple-500/30' },
-            emerald: { primary: 'text-emerald-400', bg: 'bg-emerald-500/20', border: 'border-emerald-500/30' },
-            cyan: { primary: 'text-cyan-400', bg: 'bg-cyan-500/20', border: 'border-cyan-500/30' }
+            blue: {
+                primary: 'text-blue-400',
+                bg: 'bg-blue-500/20',
+                border: 'border-blue-500/30',
+                gradient: 'from-blue-600 to-blue-700',
+                hover: 'hover:text-blue-300'
+            },
+            purple: {
+                primary: 'text-purple-400',
+                bg: 'bg-purple-500/20',
+                border: 'border-purple-500/30',
+                gradient: 'from-purple-600 to-purple-700',
+                hover: 'hover:text-purple-300'
+            },
+            emerald: {
+                primary: 'text-emerald-400',
+                bg: 'bg-emerald-500/20',
+                border: 'border-emerald-500/30',
+                gradient: 'from-emerald-600 to-emerald-700',
+                hover: 'hover:text-emerald-300'
+            },
+            rose: {
+                primary: 'text-rose-400',
+                bg: 'bg-rose-500/20',
+                border: 'border-rose-500/30',
+                gradient: 'from-rose-600 to-rose-700',
+                hover: 'hover:text-rose-300'
+            },
+            amber: {
+                primary: 'text-amber-400',
+                bg: 'bg-amber-500/20',
+                border: 'border-amber-500/30',
+                gradient: 'from-amber-600 to-amber-700',
+                hover: 'hover:text-amber-300'
+            },
+            cyan: {
+                primary: 'text-cyan-400',
+                bg: 'bg-cyan-500/20',
+                border: 'border-cyan-500/30',
+                gradient: 'from-cyan-600 to-cyan-700',
+                hover: 'hover:text-cyan-300'
+            },
+            pink: {
+                primary: 'text-pink-400',
+                bg: 'bg-pink-500/20',
+                border: 'border-pink-500/30',
+                gradient: 'from-pink-600 to-pink-700',
+                hover: 'hover:text-pink-300'
+            },
+            lime: {
+                primary: 'text-lime-400',
+                bg: 'bg-lime-500/20',
+                border: 'border-lime-500/30',
+                gradient: 'from-lime-600 to-lime-700',
+                hover: 'hover:text-lime-300'
+            },
+            indigo: {
+                primary: 'text-indigo-400',
+                bg: 'bg-indigo-500/20',
+                border: 'border-indigo-500/30',
+                gradient: 'from-indigo-600 to-indigo-700',
+                hover: 'hover:text-indigo-300'
+            }
         };
         return colors[color] || colors.blue;
     };
 
-    const accent = getAccentColors(profile.accentColor || 'blue');
-
-    const handleSwipe = (direction) => {
-        if (isAnimating) return;
-        setIsAnimating(true);
-        setSwipeDirection(direction);
-        setTimeout(() => {
-            onSwipe();
-            setIsAnimating(false);
-        }, 300);
-    };
+    const accent = getAccentColors(currentProfile.accentColor);
 
     const SkillTag = ({ skill, type }) => {
         const gradients = {
             skills: 'from-slate-700 to-slate-600',
             learning: 'from-amber-700 to-amber-600',
-            interests: `from-${profile.accentColor || 'blue'}-600 to-${profile.accentColor || 'blue'}-700`
+            interests: accent.gradient
         };
 
         return (
@@ -69,46 +186,80 @@ const ProfileCard = ({ profile, onSwipe }) => {
     return (
         <div className="min-h-screen flex items-center justify-center p-4 pt-8">
             <div className="relative w-full max-w-sm">
+
+                {/* Card Stack Background with reduced height 
+                <div className="absolute top-0 left-0 w-full h-[600px] z-0">
+                    <div className="absolute inset-0 bg-gray-900/40 backdrop-blur-sm rounded-3xl transform rotate-3 scale-95 border border-gray-700/50"></div>
+                    <div className="absolute inset-0 bg-gray-900/60 backdrop-blur-sm rounded-3xl transform rotate-1 scale-97 border border-gray-600/50"></div>
+                </div>
+
+                {/* Next Card */}
+                {isAnimating && (
+                    <div className="absolute inset-0 h-[595px] bg-gray-900 rounded-3xl shadow-2xl overflow-hidden transform scale-95 opacity-50 border border-gray-600/50">
+                        <div className="w-full h-72 bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center text-white text-xl font-bold">
+                            {nextProfile.name}
+                        </div>
+                    </div>
+                )}
+                {showPopup && (
+                    <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center">
+                        <div className="bg-white rounded-2xl shadow-2xl p-6 w-96 max-w-full text-center relative">
+                            <button
+                                onClick={() => setShowPopup(false)}
+                                className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
+                            >
+                                <X />
+                            </button>
+                            <img
+                                src={currentProfile.image}
+                                alt={currentProfile.name}
+                                className="w-24 h-24 rounded-full mx-auto shadow-md mb-4 object-cover"
+                            />
+                            <h2 className="text-xl font-bold mb-2">{currentProfile.name}</h2>
+                            <p className="text-gray-600 mb-4">Do you want to send a message?</p>
+                            <button className="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition">
+                                Message
+                            </button>
+                        </div>
+                    </div>
+                )}
+
                 {/* Main Card */}
                 <div className={`
-                    relative bg-gradient-to-br from-slate-900 to-black rounded-3xl shadow-2xl overflow-hidden transition-all duration-300 transform border border-gray-600/50 backdrop-blur-xl
-                    ${isAnimating && swipeDirection === 'left' ? '-translate-x-full -rotate-12 opacity-0' : ''}
-                    ${isAnimating && swipeDirection === 'right' ? 'translate-x-full rotate-12 opacity-0' : ''}
-                `}>
+          relative bg-gradient-to-br from-slate-900 to-black rounded-3xl shadow-2xl overflow-hidden transition-all duration-300 transform border border-gray-600/50 backdrop-blur-xl
+          ${isAnimating && swipeDirection === 'left' ? '-translate-x-full -rotate-12 opacity-0' : ''}
+          ${isAnimating && swipeDirection === 'right' ? 'translate-x-full rotate-12 opacity-0' : ''}
+        `}>
                     {/* Header */}
-                    <div className={`relative ${profile.bgGradient || bgGradients[0]} p-4 text-white overflow-hidden`}>
+                    <div className={`relative  ${currentProfile.bgGradient} p-4 text-white  overflow-hidden`}>
                         <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-16 translate-x-16"></div>
                         <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-12 -translate-x-12"></div>
 
                         <div className="relative z-10">
                             <div className="absolute top-0 right-0">
-                                <div className={`w-3 h-3 rounded-full ${profile.available ? 'bg-green-400 shadow-lg shadow-green-400/50' : 'bg-red-500'} animate-pulse`}></div>
+                                <div className={`w-3 h-3 rounded-full ${currentProfile.available ? 'bg-green-400 shadow-lg shadow-green-400/50' : 'bg-red-500'} animate-pulse`}></div>
                             </div>
 
                             <div className="flex items-center space-x-4 mb-6">
                                 <div className={`w-28 h-28 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center text-white text-2xl font-bold border border-white/20 shadow-xl ${accent.bg}`}>
                                     <img
-                                        src={profile.image || "/default-avatar.png"}
-                                        alt={profile.name}
+                                        src={currentProfile.image}
+                                        alt={currentProfile.name}
                                         className="w-full h-full object-cover rounded-md shadow-md"
-                                        onError={(e) => {
-                                            e.target.src = "/default-avatar.png";
-                                        }}
-                                    />
-                                </div>
+                                    />                </div>
                                 <div>
-                                    <h2 className="text-3xl font-bold mb-1">{profile.name}</h2>
+                                    <h2 className="text-3xl font-bold mb-1">{currentProfile.name}</h2>
                                     <p className='flex items-center text-sm'>
                                         <Calendar size={16} className="mr-2" />
-                                        {profile.dob || "Not specified"} &nbsp;&nbsp; {profile.gender || "Not specified"}
+                                        {currentProfile.dob} &nbsp;&nbsp;  {currentProfile.gender}
                                     </p>
                                     <p className="flex items-center text-sm">
                                         <Briefcase size={16} className="mr-2" />
-                                        {profile.jobTitle || "Not specified"}
+                                        {currentProfile.jobTitle}
                                     </p>
                                     <p className="text-sm flex items-center text-white/70 mt-1">
                                         <MapPin size={14} className="mr-2" />
-                                        {profile.location || "Not specified"}
+                                        {currentProfile.location}
                                     </p>
                                 </div>
                             </div>
@@ -116,11 +267,11 @@ const ProfileCard = ({ profile, onSwipe }) => {
                             <div className="flex items-center space-x-6 text-sm text-white/80">
                                 <div className="flex items-center bg-white/10 rounded-full px-3 py-1">
                                     <Award size={14} className="mr-2" />
-                                    {profile.experience || "0 years"}
+                                    {currentProfile.years_of_experience} years
                                 </div>
                                 <div className="flex items-center bg-white/10 rounded-full px-3 py-1">
                                     <Coffee size={14} className="mr-2" />
-                                    {profile.company || "Not specified"}
+                                    {currentProfile.company}
                                 </div>
                             </div>
                         </div>
@@ -128,16 +279,14 @@ const ProfileCard = ({ profile, onSwipe }) => {
 
                     {/* Content */}
                     <div className="p-4 space-y-2 bg-gradient-to-b from-slate-900 to-black -mb-2">
-                        <p className="text-slate-300">{profile.bio || "No bio available"}</p>
+                        <p className="text-slate-300">{currentProfile.bio}</p>
 
                         <div>
                             <h3 className="text-sm font-bold text-white mb-2 flex items-center">
                                 <Code size={16} className="mr-2" /> Tech Stack
                             </h3>
                             <div className="flex flex-wrap">
-                                {(profile.skills || []).map((skill, idx) => (
-                                    <SkillTag key={idx} skill={skill} type="skills" />
-                                ))}
+                                {currentProfile.skills.map((skill, idx) => <SkillTag key={idx} skill={skill} type="skills" />)}
                             </div>
                         </div>
 
@@ -146,9 +295,7 @@ const ProfileCard = ({ profile, onSwipe }) => {
                                 <Zap size={16} className="mr-2 text-yellow-400" /> Learning
                             </h3>
                             <div className="flex flex-wrap">
-                                {(profile.learning || []).map((item, idx) => (
-                                    <SkillTag key={idx} skill={item} type="learning" />
-                                ))}
+                                {currentProfile.learning.map((item, idx) => <SkillTag key={idx} skill={item} type="learning" />)}
                             </div>
                         </div>
 
@@ -157,30 +304,22 @@ const ProfileCard = ({ profile, onSwipe }) => {
                                 <Star size={16} className="mr-2 text-yellow-300" /> Interests
                             </h3>
                             <div className="flex flex-wrap">
-                                {(profile.interests || []).map((item, idx) => (
-                                    <SkillTag key={idx} skill={item} type="interests" />
-                                ))}
+                                {currentProfile.interests.map((item, idx) => <SkillTag key={idx} skill={item} type="interests" />)}
                             </div>
                         </div>
                     </div>
 
                     {/* Links */}
                     <div className="flex justify-around p-2 border-t border-slate-700 bg-black/30">
-                        {profile.github && (
-                            <a href={`https://${profile.github}`} target="_blank" rel="noopener noreferrer" className="hover:text-white text-slate-400">
-                                <Github />
-                            </a>
-                        )}
-                        {profile.linkedin && (
-                            <a href={`https://${profile.linkedin}`} target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 text-slate-400">
-                                <Linkedin />
-                            </a>
-                        )}
-                        {profile.portfolio && (
-                            <a href={`https://${profile.portfolio}`} target="_blank" rel="noopener noreferrer" className="hover:text-emerald-400 text-slate-400">
-                                <Globe />
-                            </a>
-                        )}
+                        <a href={`https://${currentProfile.github}`} target="_blank" className="hover:text-white text-slate-400">
+                            <Github />
+                        </a>
+                        <a href={`https://${currentProfile.linkedin}`} target="_blank" className="hover:text-blue-400 text-slate-400">
+                            <Linkedin />
+                        </a>
+                        <a href={`https://${currentProfile.portfolio}`} target="_blank" className="hover:text-emerald-400 text-slate-400">
+                            <Globe />
+                        </a>
                     </div>
                 </div>
 

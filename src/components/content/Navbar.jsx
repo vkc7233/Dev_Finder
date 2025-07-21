@@ -33,7 +33,7 @@ const MainNavbar = () => {
 
       {/* Left section: Contains the brand logo and link to the homepage */}
       <div className="flex-1">
-        <Link to="/" className="btn btn-ghost text-2xl">DevTinder</Link>
+        <Link to="/" className="btn btn-ghost text-2xl">Dev<span className="text-blue-500">Tinder</span></Link>
       </div>
 
       {/* Middle section: Placeholder for navigation links (currently commented out) */}
