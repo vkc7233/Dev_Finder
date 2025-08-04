@@ -20,65 +20,60 @@ const App = () => {
       <Toaster position="top-center" reverseOrder={false} />
       <AuthProvider>
         <Routes>
-          <Route path="/" element={<Home />} />
-          
-          <Route path="/landing" element={<LandingPage />} />
-     
-            <Route path="login" element={<Login />} />
-            <Route path="register" element={<Signup />} />
-            {/*             <Route path="match" element={<Match />} />
-             */}
-            <Route
-              path="/"
-              element={
-                <PrivateRoute>
-                  <Body />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="feed"
-              element={
-                <PrivateRoute>
-                  <Feed />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="profile"
-              element={
-                <PrivateRoute>
-                  <Profile />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="settings"
-              element={
-                <PrivateRoute>
-                  <Setting />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="explore"
-              element={
-                <PrivateRoute>
-                  <Explore />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="requests"
-              element={
-                <PrivateRoute>
-                  <ConnectionRequests />
-                </PrivateRoute>
-              }
-            />
+          <Route path="landing" element={<LandingPage />} />
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Signup />} />
+          {/*<Route path="match" element={<Match />} /> */}
+          <Route
+            path="/"
+            element={
+              <PrivateRoute>
+                <Body />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="feed"
+            element={
+              <PrivateRoute>
+                <Feed />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="profile"
+            element={
+              <PrivateRoute>
+                <Profile />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="settings"
+            element={
+              <PrivateRoute>
+                <Setting />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="explore"
+            element={
+              <PrivateRoute>
+                <Explore />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="requests"
+            element={
+              <PrivateRoute>
+                <ConnectionRequests />
+              </PrivateRoute>
+            }
+          />
 
-            {/* Optional: Add a 404 fallback */}
-          </Route>
+          {/* Optional: Add a 404 fallback */}
         </Routes>
       </AuthProvider>
     </>

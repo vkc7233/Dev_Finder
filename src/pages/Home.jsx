@@ -138,8 +138,9 @@ const Home = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-gray-900/50 via-gray-800/30 to-gray-900/50 backdrop-blur-sm"></div>
 
         <div
-          className={`relative z-10 max-w-6xl mx-auto transition-all duration-1000 transform ${isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
-            }`}
+          className={`relative z-10 max-w-6xl mx-auto transition-all duration-1000 transform ${
+            isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
+          }`}
         >
           {/* Main heading with gradient text */}
           <div className="mb-8">
@@ -261,14 +262,16 @@ const Home = () => {
                 {/* Online status */}
                 <div className="absolute top-4 right-4">
                   <div
-                    className={`flex items-center space-x-1 ${match.online ? "text-green-400" : "text-gray-500"
-                      }`}
+                    className={`flex items-center space-x-1 ${
+                      match.online ? "text-green-400" : "text-gray-500"
+                    }`}
                   >
                     <div
-                      className={`w-2 h-2 rounded-full ${match.online
-                        ? "bg-green-400 animate-pulse"
-                        : "bg-gray-500"
-                        }`}
+                      className={`w-2 h-2 rounded-full ${
+                        match.online
+                          ? "bg-green-400 animate-pulse"
+                          : "bg-gray-500"
+                      }`}
                     ></div>
                     <span className="text-xs">
                       {match.online ? "Online" : "Offline"}
@@ -291,12 +294,13 @@ const Home = () => {
                 {/* Match type badge */}
                 <div className="mb-4">
                   <span
-                    className={`px-3 py-1 rounded-full text-xs font-semibold ${match.matchType === "Collaboration"
-                      ? "bg-blue-500/20 text-blue-400 border border-blue-500/30"
-                      : match.matchType === "Mentorship"
+                    className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                      match.matchType === "Collaboration"
+                        ? "bg-blue-500/20 text-blue-400 border border-blue-500/30"
+                        : match.matchType === "Mentorship"
                         ? "bg-purple-500/20 text-purple-400 border border-purple-500/30"
                         : "bg-green-500/20 text-green-400 border border-green-500/30"
-                      }`}
+                    }`}
                   >
                     {match.matchType}
                   </span>
@@ -367,10 +371,11 @@ const Home = () => {
                             {chat.name}
                           </p>
                           <p
-                            className={`text-sm ${chat.unread
-                              ? "text-white font-medium"
-                              : "text-gray-400"
-                              }`}
+                            className={`text-sm ${
+                              chat.unread
+                                ? "text-white font-medium"
+                                : "text-gray-400"
+                            }`}
                           >
                             {chat.message}
                           </p>
@@ -412,10 +417,11 @@ const Home = () => {
                         </p>
                       </div>
                       <span
-                        className={`px-2 py-1 rounded-full text-xs font-semibold ${project.status.includes("Looking")
-                          ? "bg-green-500/20 text-green-400 border border-green-500/30"
-                          : "bg-blue-500/20 text-blue-400 border border-blue-500/30"
-                          }`}
+                        className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                          project.status.includes("Looking")
+                            ? "bg-green-500/20 text-green-400 border border-green-500/30"
+                            : "bg-blue-500/20 text-blue-400 border border-blue-500/30"
+                        }`}
                       >
                         {project.status}
                       </span>

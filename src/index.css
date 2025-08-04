@@ -2,18 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 @layer base {
-    input[type="number"]::-webkit-outer-spin-button,
-    input[type="number"]::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
-    
-    input[type="number"] {
-      appearance: textfield;
-      -moz-appearance: textfield;
-    }
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   }
-  /* Add in your tailwind file or global.css */
+
+  input[type="number"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+  }
+}
+/* Add in your tailwind file or global.css */
 .input {
   @apply w-full px-4 py-2 rounded-md bg-black border border-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500;
 }
